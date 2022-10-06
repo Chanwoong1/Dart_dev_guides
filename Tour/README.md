@@ -16,9 +16,9 @@ Dart 공홈에 있는 가이드 따라가보기
 
 - [A basic Dart program](#a-basic-dart-program)
 - [Important concepts](#important-concepts)
-- [Keywords]
-- [Variables]
-	- [Default value]
+- [Keywords](#keywords)
+- [Variables](#variables)
+	- [Default value](#default-value)
 	- [Late variables]
 	- [Final and const]
 - [Built-in types]
@@ -196,3 +196,66 @@ Dart를 배울 때, 다음 사실과 개념을 명심하자:
 - 1은 **contextual keywords** 로, 특정 장소에서만 의미가 있는 문맥 키워드이다. 이들은 어디서나 유효한 식별자다.
 - 2는 **built-in identifiers** 로, 이 키워드들은 대부분의 장소에서 유효한 식별자로 쓰이지만, 클래스 또는 타입 이름 혹은 import prefixes와 같은 곳에서는 쓰일 수 없다.
 - 3은 제한된 예약어로 [asynchrony support](#asynchrony-support)과 관련되어 있다. 함수 내부에서 **async** , **async \*** **sync \*** 로 표현된 것이 있을 때, **await** 또는 **yield** 를 식별자로 사용할 수 없다.
+
+## Variables
+
+다음은 변수 생성과 초기화를 하는 예다.
+```Dart
+var name = 'Bob';
+```
+변수는 참조를 저장한다. 호출된 변수는 'Bob'이라는 값을 가진 **String** 객체에 **name** 에 대한 참조가 포함되어 있다.
+
+**name** 변수의 타입은 **String** 으로 추측되지만, 해당 타입을 지정하여 변경할 수 있다. 만약 한 객체가 단일 타입으로 제한되지 않았다면, **Object(or 필요하다면 dynamic)** 타입으로 한다.
+
+```Dart
+Object name = 'Bob';
+```
+
+다른 옵션은 명확하게 추측되는 타입을 선언해주는 것이다.
+
+```Dart
+String name = 'Bob';
+```
+
+- note : 이 페이지는 지역변수의 타입 선언 대신 **var** 사용의 [style guide recommendation](#https://dart.dev/guides/language/effective-dart/design#types)을 따른다.
+
+### Default value
+
+nullable 형식인 초기화하지 않은 변수는 초기값으로 **null** 을 가진다. (만약 [null safety](https://dart.dev/null-safety)를 설정하지 않았다면, 모든 변수는 nullable 타입을 가진다.) 수치형 타입인 변수들도 처음에는 null이다, 왜냐하면 모든 경우에서 Dart에서는 객체들이기 때문이다.
+
+```Dart
+int? lineCount;
+assert(lineCount == null);
+```
+
+- note : 위 코드는 **assert()** 를 호출을 무시한다. 반면 development 동안 조건이 false가 되면 예외가 발생한다. 자세한 내용은 [Assert](#assert) 참고.
+
+만약 null safety를 허용한다면, non-nullable 변수들의 값들을 사용하기 전에 무조건 초기화해주어야한다.
+
+```Dart
+int lineCount = 0;
+```
+
+선언된 지역변수를 초기화할 필요는 없지만, 사용하기 전에 값들을 가정할 필요가 있다. 예를들어 아래 코드는 Dart가 **lineCount** 가 **print()** 에 전달될 때 non-null을 감지할 수 있기 때문에 유효한 코드이다.
+
+```Dart
+int lineCount;
+
+if (weLikeToCount) {
+	lineCount = countLines();
+}
+else {
+	lineCount = 0;
+}
+
+print(lineCount);
+```
+
+최상위 및 클래스 변수들이 느리게 초기화된다; 이 초기화 코드는 변수가 처음 사용될 때 실행된다.
+
+### Late variables
+Dart 2.12에서는 **late** 라는 수정자를 추가했다. 이건 두가지의 사용 사례가 있다.
+- non-nullable 변수를 선언할 때.
+- 게으른 변수 초기화
+
+종종 
